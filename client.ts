@@ -1,5 +1,3 @@
-import URI from "url";
-
 import { Credential } from "./credential.js";
 
 import { AWS, Secret, Types } from "./types.js";
