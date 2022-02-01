@@ -1,0 +1,38 @@
+{
+    "name": "@cloud-technology/secrets-manager-client",
+    "private": false,
+    "version": "0.1.112",
+    "description": "...",
+    "type": "module",
+    "types": "index.d.ts",
+    "scripts": {
+        "compile": "tsc --watch",
+        "start": "node --es-module-specifier-resolution node .",
+        "setup": "npm install --save-dev",
+        "upload": "npm publish --access public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cloud-hybrid/secrets-manager-client.git",
+        "directory": "."
+    },
+    "dependencies": {
+        "@aws-sdk/client-secrets-manager": "^3.49.0",
+        "@aws-sdk/credential-providers": "^3.49.0"
+    },
+    "devDependencies": {
+        "@aws-sdk/types": "^3.49.0",
+        "@types/node": "latest",
+        "@typescript-eslint/eslint-plugin": "latest",
+        "@typescript-eslint/experimental-utils": "latest",
+        "@typescript-eslint/parser": "latest",
+        "@typescript-eslint/scope-manager": "latest",
+        "@typescript-eslint/type-utils": "latest",
+        "@typescript-eslint/typescript-estree": "latest",
+        "eslint": "latest",
+        "ts-node": "latest",
+        "tslib": "latest",
+        "typescript": "latest",
+        "typescript-eslint-language-service": "latest"
+    }
+}
