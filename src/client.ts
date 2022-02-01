@@ -37,7 +37,7 @@ class Client extends Credential {
      * @param {string} name
      * @returns {Promise<Secret>}
      */
-    public async get(name: string): Promise<Secret> {
+    public async get(name: string): Promise<JSON|String> {
         await this.hydrate();
 
         const input: Types["Get"] = {
@@ -45,9 +45,10 @@ class Client extends Credential {
         };
 
         const command = await new AWS.Get( input );
-        const secret = await this.service?.send( command );
+        const response = await this.service?.send( command );
+        const secret = new Secret(response);
 
-        return new Secret( secret );
+        return secret.serialize();
     }
 
     public static async initialize (profile: string = "default") {
