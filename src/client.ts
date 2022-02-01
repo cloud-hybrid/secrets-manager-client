@@ -57,7 +57,7 @@ class Client extends Credential {
         instance.service = new AWS.Client({
             tls: true,
             apiVersion: "2017-10-17",
-            customUserAgent: "Cloud-Technology-API-Agent",
+            customUserAgent: "Cloud-Technology-API",
             runtime: "node"
         });
 
