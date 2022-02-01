@@ -32,10 +32,11 @@ class Client extends Credential {
     }
 
     /***
-     * Retrieve Secret with Secret-String Attributed
-     *
-     * @param {string} name
-     * @returns {Promise<Secret>}
+     * Retrieve JSON-Serialized (or String) Secret
+     * 
+     * @param {string} name - Secret Resource's Name
+     * 
+     * @returns {Promise<JSON | String>}
      */
     public async get(name: string): Promise<JSON|String> {
         await this.hydrate();
