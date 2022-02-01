@@ -62,8 +62,8 @@ class Secret implements Shape {
     }
 }
 
-export type { Types, Shape };
-
 export { AWS, Secret };
+
+export type { Types};
 
 export default AWS;
