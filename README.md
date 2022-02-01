@@ -7,7 +7,7 @@ AWS Secrets Manager Custom User-Agent + Client
 ```node
 import { Client } from "@cloud-technology/secrets-manager-client";
 
-const service = Client.initialize();
+const service = await Client.initialize();
 
 console.log(service);
 ```
