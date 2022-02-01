@@ -20,6 +20,9 @@ import { AWS, Secret, Types } from "./types.js";
  * const service = await Client.initialize();
  * console.log(service);
  *
+ * const secret = await service.get("Organization/Environment/Application/Resource/Identifier");
+ * console.log(secret);
+ *
  */
 
 class Client extends Credential {
@@ -68,7 +71,3 @@ class Client extends Credential {
 export { Client };
 
 export default Client;
-
-const T = await Client.initialize();
-
-console.log(T);
