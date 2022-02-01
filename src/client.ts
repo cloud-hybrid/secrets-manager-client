@@ -13,15 +13,12 @@ import { AWS, Secret, Types } from "./types.js";
  * profiles.
  *
  * Sections in the credentials file are treated as profile names, whereas profile sections in the config file
- * must have the format of[profile profile-name], except for the default profile.
+ * must have the format of `[profile profile-name]`, except for the default profile.
  *
  * @example
  * import { Client } from "client";
  * const service = await Client.initialize();
- * console.log(service);
- *
  * const secret = await service.get("Organization/Environment/Application/Resource/Identifier");
- * console.log(secret);
  *
  */
 
