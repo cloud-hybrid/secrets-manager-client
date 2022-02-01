@@ -1,13 +1,14 @@
 {
     "name": "@cloud-technology/secrets-manager-client",
     "private": false,
-    "version": "0.1.112",
+    "version": "0.1.113",
     "description": "...",
     "type": "module",
-    "types": "index.d.ts",
+    "types": "./index.d.ts",
     "scripts": {
         "compile": "tsc --watch",
         "start": "node --es-module-specifier-resolution node .",
+        "install": "npm link",
         "setup": "npm install --save-dev",
         "upload": "npm publish --access public"
     },
@@ -21,18 +22,18 @@
         "@aws-sdk/credential-providers": "^3.49.0"
     },
     "devDependencies": {
-        "@aws-sdk/types": "^3.49.0",
+        "@aws-sdk/types": "latest",
         "@types/node": "latest",
         "@typescript-eslint/eslint-plugin": "latest",
-        "@typescript-eslint/experimental-utils": "latest",
+        "@typescript-eslint/utils": "latest",
         "@typescript-eslint/parser": "latest",
-        "@typescript-eslint/scope-manager": "latest",
-        "@typescript-eslint/type-utils": "latest",
-        "@typescript-eslint/typescript-estree": "latest",
         "eslint": "latest",
         "ts-node": "latest",
         "tslib": "latest",
         "typescript": "latest",
         "typescript-eslint-language-service": "latest"
+    },
+    "exports": {
+        ".": "./index.js"
     }
 }
