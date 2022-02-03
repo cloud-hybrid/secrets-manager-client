@@ -1,6 +1,6 @@
 import { Credential } from "./credential.js";
 
-import { AWS, Secret, Types } from "./types.js";
+import { AWS } from "./aws.js";
 
 /***
  * AWS Secrets Manager Client - Augmented Credential Provider
@@ -16,54 +16,71 @@ import { AWS, Secret, Types } from "./types.js";
  * must have the format of `[profile profile-name]`, except for the default profile.
  *
  * @example
- * import { Client } from "client";
- * const service = await Client.initialize();
- * const secret = await service.get("Organization/Environment/Application/Resource/Identifier");
+ * import Utility from "util";
+ * import { Secret, Client, Input } from "@cloud-technology/secrets-manager-client";
+ *
+ * class Service extends Client {
+ *     public constructor(profile: string = "default") { super( profile ); }
+ *     public async get(name: string): Promise<JSON | String | null> {
+ *         await this.initialize();
+ *
+ *         const input: Input["Get"] = { SecretId: name };
+ *
+ *         const command = new this.commands.get( input );
+ *
+ *         const response = await this.service?.send( command ).catch((error) => {
+ *             if (error.$metadata.httpStatusCode === 400) {
+ *                 const error = new Error("Secret Not Found");
+ *                 error.name = "Secret-Not-Found-Exception";
+ *                 error.stack = Utility.inspect(error, { colors: true });
+ *
+ *                 throw error;
+ *             } else {
+ *                 throw error;
+ *             }
+ *         })
+ *
+ *         const secret = new Secret(response);
+ *
+ *         return secret.serialize();
+ *     }
+ * }
+ *
+ * const $ = "Organization/Environment/Application/Resource/Identifier";
+ *
+ * const instance = new Service("default");
+ * const service = await instance.initialize();
+ * const secret = await service.get($);
  *
  */
 
 class Client extends Credential {
-    commands = {
-        get: AWS.Get
-    };
+    commands = AWS;
 
-    public constructor(profile: string = "default") {
+    public constructor(profile: string) {
         super( profile );
     }
 
     /***
-     * Retrieve JSON-Serialized (or String) Secret
-     * 
-     * @param {string} name - Secret Resource's Name
-     * 
-     * @returns {Promise<JSON | String>}
+     * AWS Secrets Manager Function(s)
+     *
+     * @returns {string[]}
      */
-    public async get(name: string): Promise<JSON|String> {
-        await this.hydrate();
-
-        const input: Types["Get"] = {
-            SecretId: name
-        };
-
-        const command = await new AWS.Get( input );
-        const response = await this.service?.send( command );
-        const secret = new Secret(response);
-
-        return secret.serialize();
+    public methods() {
+        return Object.keys( this.commands );
     }
 
-    public static async initialize (profile: string = "default") {
-        const instance = new Client(profile);
-        await instance.hydrate();
+    public async initialize() {
+        await this.hydrate();
 
-        instance.service = new AWS.Client({
+        this.service = new AWS.Client( {
             tls: true,
             apiVersion: "2017-10-17",
             customUserAgent: "Cloud-Technology-API",
             runtime: "node"
-        });
+        } );
 
-        return instance;
+        return this;
     }
 }
 

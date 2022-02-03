@@ -1,16 +1,17 @@
 {
     "name": "@cloud-technology/secrets-manager-client",
     "private": false,
-    "version": "0.1.113",
+    "version": "0.2.15",
     "description": "...",
     "type": "module",
     "types": "./index.d.ts",
     "scripts": {
+        "build": "tsc",
         "compile": "tsc --watch",
         "start": "node --es-module-specifier-resolution node .",
         "install": "npm link",
         "setup": "npm install --save-dev",
-        "upload": "npm publish --access public"
+        "upload": "npm run build && npm publish --access public"
     },
     "repository": {
         "type": "git",

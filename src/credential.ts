@@ -31,8 +31,7 @@ import { fromIni, fromEnv } from "@aws-sdk/credential-providers";
 
 class Credential {
     public service?: Service;
-
-    public readonly profile: string;
+    public profile: string;
 
     /***
      * Returns information about the currently effective user. On POSIX platforms, this is typically a subset of the
@@ -108,5 +107,7 @@ type Service = Types["Client"] | null;
 type Configuration = Provider<Credentials>;
 
 export { Credential };
-export type { Configuration };
+
 export default Credential;
+
+export type { Configuration };

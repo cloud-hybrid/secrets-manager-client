@@ -1,22 +1,107 @@
-import { SecretsManagerClient, GetSecretValueCommand, GetSecretValueCommandInput, GetSecretValueResponse } from "@aws-sdk/client-secrets-manager";
+import {
+    SecretsManagerClient,
 
-const AWS = {
-    Client: SecretsManagerClient,
-    Get: GetSecretValueCommand
-};
+    CreateSecretCommandInput,
+    ListSecretsCommandInput,
+    GetSecretValueCommandInput,
+    RotateSecretCommandInput,
+    CancelRotateSecretCommandInput,
+    DeleteSecretCommandInput,
+    DescribeSecretCommandInput,
+    TagResourceCommandInput,
+    GetRandomPasswordCommandInput,
+    UntagResourceCommandInput,
+    UpdateSecretCommandInput,
 
+    GetSecretValueCommandOutput,
+    CreateSecretCommandOutput,
+    ListSecretsCommandOutput,
+    CancelRotateSecretCommandOutput,
+    RotateSecretCommandOutput,
+    DeleteSecretCommandOutput,
+    DescribeSecretCommandOutput,
+    GetRandomPasswordCommandOutput,
+    TagResourceCommandOutput,
+    UpdateSecretCommandOutput,
+    UntagResourceCommandOutput,
+
+    CancelRotateSecretResponse,
+    PutSecretValueResponse,
+    ReplicateSecretToRegionsResponse,
+    CreateSecretResponse,
+    DeleteResourcePolicyResponse,
+    DeleteSecretResponse,
+    DescribeSecretResponse,
+    GetRandomPasswordResponse,
+    GetResourcePolicyResponse,
+    GetSecretValueResponse,
+    ListSecretVersionIdsResponse,
+    PutResourcePolicyResponse,
+    RemoveRegionsFromReplicationResponse,
+    RestoreSecretResponse,
+    RotateSecretResponse,
+    StopReplicationToReplicaResponse,
+    UpdateSecretResponse,
+    UpdateSecretVersionStageResponse
+} from "@aws-sdk/client-secrets-manager";
+
+const $ = SecretsManagerClient;
 type Client = SecretsManagerClient;
+type Filters = keyof Query;
+
+interface Query {
+    description: string;
+    name: string;
+    "tag-key": string;
+    "tag-value": string;
+    "primary-region": string;
+    all: any;
+}
+
+interface Input {
+    Create: CreateSecretCommandInput;
+    List: ListSecretsCommandInput;
+    Get: GetSecretValueCommandInput;
+    Rotate: RotateSecretCommandInput;
+    Cancel: CancelRotateSecretCommandInput;
+    Delete: DeleteSecretCommandInput;
+    Describe: DescribeSecretCommandInput;
+    Tag: TagResourceCommandInput;
+    Random: GetRandomPasswordCommandInput;
+    Update: UpdateSecretCommandInput;
+    Untag: UntagResourceCommandInput;
+}
+
+interface Output {
+    Create: CreateSecretCommandOutput;
+    List: ListSecretsCommandOutput;
+    Get: GetSecretValueCommandOutput;
+    Rotate: RotateSecretCommandOutput;
+    Cancel: CancelRotateSecretCommandOutput;
+    Delete: DeleteSecretCommandOutput;
+    Describe: DescribeSecretCommandOutput;
+    Tag: TagResourceCommandOutput;
+    Random: GetRandomPasswordCommandOutput;
+    Update: UpdateSecretCommandOutput;
+    Untag: UntagResourceCommandOutput;
+}
+
+interface Response {
+    Create: CreateSecretResponse;
+    List: ListSecretVersionIdsResponse;
+    Get: GetSecretValueResponse;
+    Rotate: RotateSecretResponse;
+    Cancel: CancelRotateSecretResponse;
+    Delete: DeleteSecretResponse;
+    Describe: DescribeSecretResponse;
+    Random: GetRandomPasswordResponse;
+    Update: UpdateSecretResponse;
+}
 
 interface INI {
     accessKeyId: string;
     secretAccessKey: string;
     profile: string;
-}
-
-interface Types {
-    Client: Client;
-    Get: GetSecretValueCommandInput;
-    INI: INI;
 }
 
 interface Shape {
@@ -29,41 +114,45 @@ interface Shape {
     stages?: string[] | undefined;
 }
 
-class Secret implements Shape {
-    id;
-    creation;
-    name;
-    binary;
-    secret;
-    version;
-    stages;
-
-    constructor (response?: GetSecretValueResponse) {
-        this.id = response?.ARN;
-        this.creation = response?.CreatedDate;
-        this.name = response?.Name;
-        this.binary = response?.SecretBinary;
-        this.secret = response?.SecretString;
-        this.version = response?.VersionId;
-        this.stages = response?.VersionStages;
-    }
-
-    /*** Serialize Secret.secret into JSON */
-    public serialize () {
-        if (this.secret) {
-            try {
-                return JSON.parse(this.secret);
-            } catch (e) {
-                return this.secret;
-            }
-        } else {
-            return null;
-        }
-    }
+interface Types {
+    Client: Client;
+    INI: INI;
+    Input: Input;
+    Output: Output;
+    Shape: Shape;
 }
 
-export { AWS, Secret };
+interface Tag {
+    Key?: string;
+    Value?: string;
+}
 
-export type { Types};
+/*** The AWS Secret Resource */
+interface Resource {
+    /*** Secret.ARN */
+    id?: string | undefined;
+    /*** Secret.CreatedDate */
+    creation?: Date | string | undefined;
+    /*** Secret.DeletedDate */
+    deletion?: Date | string | undefined;
+    /*** Secret.Description */
+    description?: string | undefined;
+    /*** Secret.LastAccessedDate */
+    access?: Date | string | undefined;
+    /*** Secret.LastChangedDate */
+    modification?: Date | string | undefined;
+    /*** Secret.Name */
+    name?: string | undefined;
+    /*** Secret.SecretVersionsToStages */
+    version: {
+        [key: string]: string[]
+    };
+    /*** Secret.Tags */
+    tags?: Tag[] | undefined;
+}
 
-export default AWS;
+export { $ };
+
+export type { Shape, Input, Output, Types, Tag, Response, Resource, Query, Filters };
+
+export default Client;
