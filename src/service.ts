@@ -177,7 +177,7 @@ class Service extends Client {
     /***
      * Create a new Secret
      *
-     * @param {Parameter} parameter
+     * @param {Parameter | string} parameter
      * @param {string} description
      * @param {string} secret
      * @param {boolean} overwrite
@@ -186,18 +186,20 @@ class Service extends Client {
      *
      */
 
-    async create(parameter: Parameter, description: string, secret: string, overwrite: boolean = false): Promise<Secret> {
+    async create(parameter: Parameter | string, description: string, secret: string, overwrite: boolean = false): Promise<Secret> {
         await this.initialize();
 
-        const organization = parameter.organization;
-        const environment = parameter.environment;
-        const application = parameter.application;
-        const service = parameter.service;
+        const $ = ( parameter instanceof Parameter) ? parameter : Parameter.create(parameter);
 
-        const identifier = parameter.identifier;
+        const organization = $.organization;
+        const environment = $.environment;
+        const application = $.application;
+        const service = $.service;
+
+        const identifier = $.identifier;
 
         const input: Input["Create"] = {
-            Name: parameter.string("Directory"),
+            Name: $.string("Directory"),
             Description: description,
             ForceOverwriteReplicaSecret: overwrite,
             SecretString: secret,
@@ -220,7 +222,7 @@ class Service extends Client {
                 },
                 {
                     Key: "Identifier",
-                    Value: String(identifier)
+                    Value: String(identifier ?? "N/A")
                 }
             ]
         };

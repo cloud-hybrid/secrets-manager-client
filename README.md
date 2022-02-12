@@ -5,40 +5,48 @@ AWS Secrets Manager Custom User-Agent + Client
 ## Usage ##
 
 ```node
-import Utility from "util";
-import { Secret, Client, Input } from "@cloud-technology/secrets-manager-client";
+import { Service } from "@cloud-technology/secrets-manager-client";
 
-class Service extends Client {
-    public constructor(profile: string = "default") { super(profile); }
+const client = new Service();
 
-    public async get(name: string): Promise<JSON | String | null> {
-        await this.initialize();
+const secret = await client.get( "Organization/Environment/Application/Service/Example" );
+```
 
-        const input: Input["Get"] = { SecretId: name };
+### Custom Profile Example ###
 
-        const command = new this.commands.get(input);
+```node
+import { Service } from "@cloud-technology/secrets-manager-client";
 
-        const response = await this.service?.send(command).catch((error) => {
-            if ( error.$metadata.httpStatusCode === 400 ) {
-                const error = new Error("Secret Not Found");
-                error.name = "Secret-Not-Found-Exception";
-                error.stack = Utility.inspect(error, { colors: true });
+const client = new Service("Production");
 
-                throw error;
-            } else {
-                throw error;
-            }
-        })
+const secret = await client.get( "Organization/Environment/Application/Service/Example" );
+```
 
-        const secret = new Secret(response);
+### Extended Example(s) ###
 
-        return secret.serialize();
-    }
-}
+```node
+import { Parameter } from "@cloud-technology/parameter";
+import { Service } from "@cloud-technology/secrets-manager-client";
 
-const $ = "Organization/Environment/Application/Resource/Identifier";
+const $ = new Service();
 
-const instance = new Service("default");
+const name = "Organization/Environment/Application/Service/Example";
 
-const secret = await service.get($);
+const days = 7;
+const overwrite = false;
+const description = "Secret Parameter Unit Test";
+
+// Note - Values should never be stored, written, or created in code
+// Please read-in from a file in production when creating secrets
+const secret = JSON.stringify( {
+    Key: "Example-Key",
+    Value: "Example-Value"
+} );
+
+const creation = await $.create( Parameter.create( name ), description, secret, overwrite );
+
+const list = await $.list();
+const search = await $.search( "name", name );
+const resource = await $.get( Parameter.create( name ) );
+const deletion = await $.delete( Parameter.create( name ), days );
 ```

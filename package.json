@@ -1,7 +1,7 @@
 {
     "name": "@cloud-technology/secrets-manager-client",
     "private": false,
-    "version": "0.3.17",
+    "version": "0.4.21",
     "description": "...",
     "type": "module",
     "types": "index.d.ts",
@@ -9,7 +9,6 @@
         "build": "tsc",
         "compile": "tsc --watch",
         "start": "node --es-module-specifier-resolution node .",
-        "install": "npm link",
         "test": "node --es-module-specifier-resolution node unit-testing",
         "setup": "npm install --save-dev",
         "upload": "npm run build && npm publish --access public"
@@ -27,6 +26,7 @@
     },
     "devDependencies": {
         "@aws-sdk/types": "latest",
+        "@cloud-technology/secrets-manager": "latest",
         "@jest/globals": "latest",
         "@types/jest": "latest",
         "@types/node": "latest",
