@@ -1,7 +1,7 @@
 {
     "name": "@cloud-technology/secrets-manager-client",
     "private": false,
-    "version": "0.2.15",
+    "version": "0.3.16",
     "description": "...",
     "type": "module",
     "types": "./index.d.ts",
@@ -10,6 +10,7 @@
         "compile": "tsc --watch",
         "start": "node --es-module-specifier-resolution node .",
         "install": "npm link",
+        "test": "node --es-module-specifier-resolution node ./unit-testing",
         "setup": "npm install --save-dev",
         "upload": "npm run build && npm publish --access public"
     },
@@ -20,15 +21,27 @@
     },
     "dependencies": {
         "@aws-sdk/client-secrets-manager": "^3.49.0",
-        "@aws-sdk/credential-providers": "^3.49.0"
+        "@aws-sdk/credential-providers": "^3.49.0",
+        "@cloud-technology/parameter": "^0.6.135",
+        "uuid": "^8.3.2"
     },
     "devDependencies": {
         "@aws-sdk/types": "latest",
+        "@jest/globals": "latest",
+        "@types/jest": "latest",
         "@types/node": "latest",
+        "@types/uuid": "^8.3.4",
         "@typescript-eslint/eslint-plugin": "latest",
-        "@typescript-eslint/utils": "latest",
+        "@typescript-eslint/experimental-utils": "latest",
         "@typescript-eslint/parser": "latest",
+        "@typescript-eslint/scope-manager": "latest",
+        "@typescript-eslint/type-utils": "latest",
+        "@typescript-eslint/typescript-estree": "latest",
+        "@typescript-eslint/utils": "latest",
         "eslint": "latest",
+        "jest": "latest",
+        "node-notifier": "^10.0.1",
+        "ts-jest": "latest",
         "ts-node": "latest",
         "tslib": "latest",
         "typescript": "latest",

@@ -38,4 +38,8 @@ cdktf.out/**
 *.tgz
 *.zip
 
+*.secret
+
+jest.config.js
 tsconfig.tsbuildinfo
+unit-testing/index.js

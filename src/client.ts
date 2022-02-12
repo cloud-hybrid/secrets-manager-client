@@ -17,6 +17,7 @@ import { AWS } from "./aws.js";
  *
  * @example
  * import Utility from "util";
+ *
  * import { Secret, Client, Input } from "@cloud-technology/secrets-manager-client";
  *
  * class Service extends Client {

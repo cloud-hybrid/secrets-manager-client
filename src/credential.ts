@@ -86,9 +86,27 @@ class Credential {
         this.ini =  fromIni( { ... configuration});
     }
 
+    /***
+     * Initialize Client via Environment or Profile Credentials
+     * ---
+     *
+     * Ensure to pass in `true` as the `environment` parameter if the credentials
+     * should be initialized via environment variables:
+     * - `AWS_ACCESS_KEY_ID`
+     * - `AWS_SECRET_ACCESS_TOKEN`
+     *
+     * @protected
+     *
+     * @param {boolean} environment
+     *
+     * @returns {Promise<void>}
+     *
+     */
+
     protected async hydrate (environment?: boolean) {
         (environment) && await this.env();
-        await this.ini().then(($) => {
+
+        (environment) || await this.ini().then(($) => {
             this.id = $.accessKeyId;
             this.key = $.secretAccessKey;
         });

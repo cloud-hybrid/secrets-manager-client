@@ -39,6 +39,6 @@ class Service extends Client {
 const $ = "Organization/Environment/Application/Resource/Identifier";
 
 const instance = new Service("default");
-const service = await instance.initialize();
+
 const secret = await service.get($);
 ```
