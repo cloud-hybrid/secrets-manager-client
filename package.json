@@ -4,13 +4,13 @@
     "version": "0.3.17",
     "description": "...",
     "type": "module",
-    "types": "./index.d.ts",
+    "types": "index.d.ts",
     "scripts": {
         "build": "tsc",
         "compile": "tsc --watch",
         "start": "node --es-module-specifier-resolution node .",
         "install": "npm link",
-        "test": "node --es-module-specifier-resolution node ./unit-testing",
+        "test": "node --es-module-specifier-resolution node unit-testing",
         "setup": "npm install --save-dev",
         "upload": "npm run build && npm publish --access public"
     },
