@@ -1,12 +1,4 @@
-import Process from "process";
-import { Credential } from "./credential.js";
-
-import { Sha256 } from "@aws-crypto/sha256-js";
-
-import { AWS } from "./aws.js";
-
-import Utility from "util";
-
+﻿import { Credential } from "./credential.js";
 /***
  * AWS Secrets Manager Client - Augmented Credential Provider
  * ---
@@ -59,41 +51,29 @@ import Utility from "util";
  * const secret = await service.get($);
  *
  */
-
-class Client extends Credential {
-    commands = AWS;
-
-    public constructor( profile: string ) {
-        super( profile );
-    }
-
+declare class Client extends Credential {
+    commands: {
+        Client: typeof import("@aws-sdk/client-secrets-manager").SecretsManagerClient;
+        create: typeof import("@aws-sdk/client-secrets-manager").CreateSecretCommand;
+        list: typeof import("@aws-sdk/client-secrets-manager").ListSecretsCommand;
+        get: typeof import("@aws-sdk/client-secrets-manager").GetSecretValueCommand;
+        rotate: typeof import("@aws-sdk/client-secrets-manager").RotateSecretCommand;
+        cancel: typeof import("@aws-sdk/client-secrets-manager").CancelRotateSecretCommand;
+        delete: typeof import("@aws-sdk/client-secrets-manager").DeleteSecretCommand;
+        describe: typeof import("@aws-sdk/client-secrets-manager").DescribeSecretCommand;
+        tag: typeof import("@aws-sdk/client-secrets-manager").TagResourceCommand;
+        random: typeof import("@aws-sdk/client-secrets-manager").GetRandomPasswordCommand;
+        update: typeof import("@aws-sdk/client-secrets-manager").UpdateSecretCommand;
+        untag: typeof import("@aws-sdk/client-secrets-manager").UntagResourceCommand;
+    };
+    constructor(profile: string);
     /***
      * AWS Secrets Manager Function(s)
      *
      * @returns {string[]}
      */
-    public methods() {
-        return Object.keys( this.commands );
-    }
-
-    public async initialize( debug: boolean = false ) {
-        await this.hydrate( );
-
-        this.service = new AWS.Client( {
-            tls: true,
-            sha256: Sha256,
-            apiVersion: "2017-10-17",
-            credentials: this.settings,
-            customUserAgent: "Cloud-Technology-API",
-            region: Process.env?.["AWS_DEFAULT_REGION"] ?? "us-east-2"
-        } );
-
-        ( debug ) && console.debug( "[Debug] Client Instance" + ":", Utility.inspect( this, { showHidden: true, depth: Infinity } ) );
-
-        return this;
-    }
+    methods(): string[];
+    initialize(debug?: boolean): Promise<this>;
 }
-
 export { Client };
-
 export default Client;

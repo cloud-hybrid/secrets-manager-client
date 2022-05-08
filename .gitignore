@@ -1,6 +1,10 @@
+.gen
+.swc
 .idea
 .vscode
 .eclipse
+
+test
 
 artifacts
 artifacts/*
@@ -18,8 +22,6 @@ declarations
 declarations/*
 declarations/**
 
-coverage
-
 .terraform/*
 
 *.tfstate
@@ -29,17 +31,47 @@ cdktf.out
 cdktf.out/*
 cdktf.out/**
 
-*.js
-**/*.js
-**/*.d.ts
-
 .DS_Store
 
 *.tgz
 *.zip
+*.tar
 
-*.secret
-
-jest.config.js
 tsconfig.tsbuildinfo
-unit-testing/index.js
+
+src/**/*.js
+src/**/*.map
+src/**/*.d.ts
+
+@types/**/*.js
+@types/**/*.map
+@types/**/*.d.ts
+
+.terraform
+
+.terraform.tfstate
+.terraform.tfstate.backup
+.terraform.tfstate.backup.*
+
+tf/**/.terraform.lock.hcl
+
+.env
+.env.local
+.env.local.*
+.env.*.local
+.env.*.local.*
+
+.gitlab-id
+.gitlab-token
+.gitlab-url
+.gitlab-username
+
+*.js
+*.js.map
+
+*.d.ts
+*.d.ts.map
+
+ci
+coverage
+configuration.json

@@ -1,13 +1,13 @@
-import FS from "fs";
 import OS from "os";
-import Path from "path";
 import Process from "process";
+import Utility from "util";
 
 import { Provider, Credentials } from "@aws-sdk/types";
 
-import { Types } from "./types.js";
+import { defaultProvider } from "@aws-sdk/credential-provider-node";
+import { CredentialProvider } from "@aws-sdk/types";
 
-import { fromIni, fromEnv } from "@aws-sdk/credential-providers";
+import { Types } from "./types.js";
 
 /***
  * Client Credentials
@@ -30,8 +30,13 @@ import { fromIni, fromEnv } from "@aws-sdk/credential-providers";
  */
 
 class Credential {
+    id?: string | null = Process.env["AWS_ACCESS_KEY_ID"];
+    key?: string | null = Process.env["AWS_SECRET_ACCESS_TOKEN"];
+    region?: string | null = Process.env["AWS_DEFAULT_REGION"];
+
     public service?: Service;
-    public profile: string;
+
+    readonly profile: string;
 
     /***
      * Returns information about the currently effective user. On POSIX platforms, this is typically a subset of the
@@ -44,80 +49,46 @@ class Credential {
      *
      */
 
-    private readonly user = OS.userInfo();
-    private readonly credentials: string;
-    private readonly configuration: string;
-    private readonly valid: boolean;
+    readonly user = OS.userInfo();
+
+    readonly settings: CredentialProvider;
 
     /// Debugging, Potential Usage via Container or EC2 Runtime(s)
-    /// private environment = {
-    ///     "AWS_SHARED_CREDENTIALS_FILE": [Process.env["AWS_SHARED_CREDENTIALS_FILE"], Boolean(Process.env["AWS_SHARED_CREDENTIALS_FILE"])],
-    ///     "AWS_CONFIG_FILE": [Process.env["AWS_CONFIG_FILE"], Boolean(Process.env["AWS_CONFIG_FILE"])],
-    ///     "AWS_DEFAULT_REGION": [Process.env["AWS_DEFAULT_REGION"], Boolean(Process.env["AWS_DEFAULT_REGION"])],
-    ///     "AWS_ACCESS_KEY_ID": [Process.env["AWS_ACCESS_KEY_ID"], Boolean(Process.env["AWS_ACCESS_KEY_ID"])],
-    ///     "AWS_SECRET_ACCESS_TOKEN": [Process.env["AWS_SECRET_ACCESS_TOKEN"], Boolean(Process.env["AWS_SECRET_ACCESS_TOKEN"])]
-    /// }
+    private environment = {
+        "AWS_SHARED_CREDENTIALS_FILE": [ Process.env["AWS_SHARED_CREDENTIALS_FILE"], Boolean( Process.env["AWS_SHARED_CREDENTIALS_FILE"] ) ],
+        "AWS_CONFIG_FILE": [ Process.env["AWS_CONFIG_FILE"], Boolean( Process.env["AWS_CONFIG_FILE"] ) ],
+        "AWS_DEFAULT_REGION": [ Process.env["AWS_DEFAULT_REGION"], Boolean( Process.env["AWS_DEFAULT_REGION"] ) ],
+        "AWS_ACCESS_KEY_ID": [ Process.env["AWS_ACCESS_KEY_ID"], Boolean( Process.env["AWS_ACCESS_KEY_ID"] ) ],
+        "AWS_SECRET_ACCESS_TOKEN": [ Process.env["AWS_SECRET_ACCESS_TOKEN"], Boolean( Process.env["AWS_SECRET_ACCESS_TOKEN"] ) ]
+    };
 
-    private readonly ini: Configuration;
-
-    /*** Escape Hatch */
-    private readonly env: Configuration;
-
-    private id?: string = Process.env["AWS_ACCESS_KEY_ID"];
-    private key?: string = Process.env["AWS_SECRET_ACCESS_TOKEN"];
-
-    public constructor(profile: string) {
-        this.user = OS.userInfo({ encoding: "utf-8" });
-        this.credentials = Process.env["AWS_SHARED_CREDENTIALS_FILE"] || Path.join(this.user.homedir, ".aws", "credentials");
-        this.configuration = Process.env["AWS_CONFIG_FILE"] || Path.join(this.user.homedir, ".aws", "config");
-
+    protected constructor( profile: string ) {
         this.profile = profile;
+        this.settings = defaultProvider( {
+            profile: this.profile
+        } );
+    }
 
-        const configuration = {
-            profile: this.profile,
-            filepath: this.credentials,
-            configFilepath: this.configuration
-        };
+    public static async initialize( profile: string = "default", debug: boolean = false ) {
+        const instance = new Credential( profile );
 
-        this.valid = FS.existsSync(this.configuration);
+        await instance.hydrate();
 
-        this.env = fromEnv();
+        ( debug ) && console.debug( "[Debug] Credential Instance" + ":", Utility.inspect( this, { showHidden: true, depth: Infinity } ) );
 
-        this.ini =  fromIni( { ... configuration});
+        return instance;
     }
 
     /***
      * Initialize Client via Environment or Profile Credentials
-     * ---
-     *
-     * Ensure to pass in `true` as the `environment` parameter if the credentials
-     * should be initialized via environment variables:
-     * - `AWS_ACCESS_KEY_ID`
-     * - `AWS_SECRET_ACCESS_TOKEN`
-     *
-     * @protected
-     *
-     * @param {boolean} environment
      *
      * @returns {Promise<void>}
-     *
      */
 
-    protected async hydrate (environment?: boolean) {
-        (environment) && await this.env();
+    protected async hydrate( debug: boolean = false ) {
+        await this.settings;
 
-        (environment) || await this.ini().then(($) => {
-            this.id = $.accessKeyId;
-            this.key = $.secretAccessKey;
-        });
-    }
-
-    public static async initialize (profile: string = "default") {
-        const instance = new Credential(profile);
-
-        await instance.hydrate();
-
-        return instance;
+        ( debug ) && console.debug( "[Debug] Credential Instance" + ":", Utility.inspect( this, { showHidden: true, depth: Infinity } ) );
     }
 }
 

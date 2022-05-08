@@ -1,9 +1,10 @@
 {
-    "name": "@cloud-technology/secrets-manager-client",
+    "name": "@iac-factory/secrets-manager-client",
     "private": false,
-    "version": "0.4.21",
-    "description": "...",
-    "type": "module",
+    "version": "0.4.51",
+    "main": "index.js",
+    "description": "Secrets Manager Client Initializer",
+    "type": "commonjs",
     "types": "index.d.ts",
     "scripts": {
         "build": "tsc",
@@ -11,41 +12,28 @@
         "start": "node --es-module-specifier-resolution node .",
         "test": "node --es-module-specifier-resolution node unit-testing",
         "setup": "npm install --save-dev",
-        "upload": "npm run build && npm publish --access public"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/cloud-hybrid/secrets-manager-client.git",
-        "directory": "."
+        "upload": "npm publish --access public",
+        "reinstall": "npm update && npm install --global --force",
+        "prepublishOnly": "npm install --silent && tsc && npm run test"
     },
     "dependencies": {
         "@aws-sdk/client-secrets-manager": "^3.49.0",
+        "@aws-sdk/credential-provider-node": "^3.54.0",
         "@aws-sdk/credential-providers": "^3.49.0",
-        "@cloud-technology/parameter": "^0.6.135",
-        "uuid": "^8.3.2"
+        "@cloud-technology/parameter": "^0.7.142"
     },
     "devDependencies": {
         "@aws-sdk/types": "latest",
-        "@cloud-technology/secrets-manager": "latest",
         "@jest/globals": "latest",
         "@types/jest": "latest",
         "@types/node": "latest",
         "@types/uuid": "latest",
-        "@typescript-eslint/eslint-plugin": "latest",
-        "@typescript-eslint/experimental-utils": "latest",
-        "@typescript-eslint/parser": "latest",
-        "@typescript-eslint/scope-manager": "latest",
-        "@typescript-eslint/type-utils": "latest",
-        "@typescript-eslint/typescript-estree": "latest",
-        "@typescript-eslint/utils": "latest",
-        "eslint": "latest",
         "jest": "latest",
         "node-notifier": "latest",
         "ts-jest": "latest",
         "ts-node": "latest",
         "tslib": "latest",
-        "typescript": "latest",
-        "typescript-eslint-language-service": "latest"
+        "typescript": "latest"
     },
     "exports": {
         ".": "./index.js"

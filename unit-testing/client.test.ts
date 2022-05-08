@@ -20,7 +20,7 @@ describe( "Client Usage", () => {
         const overwrite = false;
         const description = "Secret Parameter Unit Test";
 
-        const creation = await $.create( Parameter.create( name ), description, secret, overwrite );
+        const creation = await $.create( Parameter.initialize( name ), description, secret, overwrite );
 
         console.log( Utility.inspect( creation, { colors: true, showProxy: true, showHidden: true } ) );
 
@@ -30,7 +30,7 @@ describe( "Client Usage", () => {
     it( "Retrieval", async () => {
         const name = [ "Organization/Environment/Application/Unit-Test", Identifier ].join( "/" );
 
-        const value = await $.get( Parameter.create( name ) );
+        const value = await $.get( Parameter.initialize( name ) );
 
         console.log( Utility.inspect( value, { colors: true, showProxy: true, showHidden: true } ) );
 
@@ -40,7 +40,7 @@ describe( "Client Usage", () => {
     it( "Assignment", async () => {
         const name = [ "Organization/Environment/Application/Unit-Test", Identifier ].join( "/" );
 
-        const value = await $.get( Parameter.create( name ) );
+        const value = await $.get( Parameter.initialize( name ) );
 
         console.log( Utility.inspect( value, { colors: true, showProxy: true, showHidden: true } ) );
 
@@ -73,7 +73,7 @@ describe( "Client Usage", () => {
         const days = 7;
         const force = false;
 
-        const deletion = await $.delete( Parameter.create( name ), days );
+        const deletion = await $.delete( Parameter.initialize( name ), days );
 
         console.log( Utility.inspect( deletion, { colors: true, showProxy: true, showHidden: true } ) );
 

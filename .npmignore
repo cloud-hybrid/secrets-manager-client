@@ -1,3 +1,5 @@
 .tf
 .idea
 .vscode
+unit-testing
+tsconfig.tsbuildinfo

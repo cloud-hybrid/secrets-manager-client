@@ -1,11 +1,11 @@
-import Utility from "util";
-
-import { Client } from "./client.js";
-import { Secret, Secrets } from "./aws.js";
-import { Filters, Input } from "./types.js";
-
-import { Parameter } from "@cloud-technology/parameter";
-
+﻿"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Service = void 0;
+const tslib_1 = require("tslib");
+const util_1 = tslib_1.__importDefault(require("util"));
+const client_js_1 = require("./client.js");
+const aws_js_1 = require("./aws.js");
+const parameter_1 = require("@cloud-technology/parameter");
 /***
  * AWS Secrets Manager Service Interface
  * ---
@@ -40,51 +40,38 @@ import { Parameter } from "@cloud-technology/parameter";
  *
  * const search = await service.search("name", "Organization");
  */
-
-class Service extends Client {
-    public constructor(profile: string = "default") { super( profile ); }
-
+class Service extends client_js_1.Client {
+    constructor(profile = "default") { super(profile); }
     /***
      * List all AWS Account Secret(s)
      *
      * @returns {Promise<Secrets>}
      *
      */
-
-    public async list(): Promise<Secrets> {
+    async list() {
         await this.initialize();
-
-        const secrets: Secrets = [];
-        const input: Input["List"] = {
+        const secrets = [];
+        const input = {
             MaxResults: Infinity
         };
-
-        const command = new this.commands.list( input );
-        const response = await this.service?.send( command );
-
-        let page = new Secrets(response);
-
-        secrets.push(... page);
-
+        const command = new this.commands.list(input);
+        const response = await this.service?.send(command);
+        let page = new aws_js_1.Secrets(response);
+        secrets.push(...page);
         while (page.token) {
-            const input: Input["List"] = {
+            const input = {
                 MaxResults: Infinity,
                 NextToken: page.token
             };
-
-            const command = new this.commands.list( input );
-            const response = await this.service?.send( command );
-
-            page = new Secrets(response);
-
-            secrets.push(... page);
-
-            if (!page.token) break;
+            const command = new this.commands.list(input);
+            const response = await this.service?.send(command);
+            page = new aws_js_1.Secrets(response);
+            secrets.push(...page);
+            if (!page.token)
+                break;
         }
-
         return secrets;
     }
-
     /***
      * Query AWS Account Secret(s) According to Filter
      *
@@ -94,11 +81,9 @@ class Service extends Client {
      * @returns {Promise<Secrets>}
      *
      */
-
-    async search(filter: Filters, value?: string | string[]): Promise<Secrets> {
+    async search(filter, value) {
         await this.initialize();
-
-        const secrets: Secrets = [];
+        const secrets = [];
         const input = (value) ? {
             MaxResults: Infinity,
             Filters: [
@@ -109,16 +94,12 @@ class Service extends Client {
         } : {
             MaxResults: Infinity
         };
-
-        const command = new this.commands.list( input );
-        const response = await this.service?.send( command );
-
-        let page = new Secrets(response);
-
-        secrets.push(... page);
-
+        const command = new this.commands.list(input);
+        const response = await this.service?.send(command);
+        let page = new aws_js_1.Secrets(response);
+        secrets.push(...page);
         while (page.token) {
-            const input: Input["List"] = (value) ? {
+            const input = (value) ? {
                 MaxResults: Infinity,
                 Filters: [
                     {
@@ -128,19 +109,15 @@ class Service extends Client {
             } : {
                 MaxResults: Infinity, NextToken: page.token
             };
-
-            const command = new this.commands.list( input );
-            const response = await this.service?.send( command );
-
-            page = new Secrets(response);
-            secrets.push(... page);
-
-            if (!page.token) break;
+            const command = new this.commands.list(input);
+            const response = await this.service?.send(command);
+            page = new aws_js_1.Secrets(response);
+            secrets.push(...page);
+            if (!page.token)
+                break;
         }
-
         return secrets;
     }
-
     /***
      * Retrieve Secrets-Manager Serialized Value(s)
      *
@@ -149,31 +126,24 @@ class Service extends Client {
      * @returns {Promise<JSON | String | null>}
      *
      */
-
-    public async get(parameter: Parameter | string): Promise<JSON | String | null> {
+    async get(parameter) {
         await this.initialize();
-
-        const input: Input["Get"] = ( parameter instanceof Parameter ) ? { SecretId: parameter.string() } : { SecretId: parameter };
-
-        const command = new this.commands.get( input );
-
-        const response = await this.service?.send( command ).catch( (error) => {
-            if ( error.$metadata.httpStatusCode === 400 ) {
-                const error = new Error( "Secret Not Found" );
+        const input = (parameter instanceof parameter_1.Parameter) ? { SecretId: parameter.string() } : { SecretId: parameter };
+        const command = new this.commands.get(input);
+        const response = await this.service?.send(command).catch((error) => {
+            if (error.$metadata.httpStatusCode === 400) {
+                const error = new Error("Secret Not Found");
                 error.name = "Secret-Not-Found-Exception";
-                error.stack = Utility.inspect( error, { colors: true } );
-
-                throw error;
-            } else {
+                error.stack = util_1.default.inspect(error, { colors: true });
                 throw error;
             }
-        } );
-
-        const secret = new Secret( response );
-
+            else {
+                throw error;
+            }
+        });
+        const secret = new aws_js_1.Secret(response);
         return secret.serialize();
     }
-
     /***
      * Create a new Secret
      *
@@ -185,19 +155,15 @@ class Service extends Client {
      * @returns {Promise<Secret>}
      *
      */
-
-    async create(parameter: Parameter | string, description: string, secret: string, overwrite: boolean = false): Promise<Secret> {
+    async create(parameter, description, secret, overwrite = false) {
         await this.initialize();
-
-        const $ = ( parameter instanceof Parameter) ? parameter : Parameter.initialize(parameter);
-
+        const $ = (parameter instanceof parameter_1.Parameter) ? parameter : parameter_1.Parameter.initialize(parameter);
         const organization = $.organization;
         const environment = $.environment;
         const application = $.application;
         const service = $.service;
         const identifier = $.identifier;
-
-        const input: Input["Create"] = {
+        const input = {
             Name: $.string("Directory"),
             Description: description,
             ForceOverwriteReplicaSecret: overwrite,
@@ -242,28 +208,23 @@ class Service extends Client {
                 }
             ]
         };
-
-        const command = new this.commands.create( input );
-
-        const response = await this.service?.send( command ).catch( (error) => {
+        const command = new this.commands.create(input);
+        const response = await this.service?.send(command).catch((error) => {
             throw error;
-        } );
-
-        return new Secret(response);
+        });
+        return new aws_js_1.Secret(response);
     }
-
-    private static recovery(days: number = 7) {
+    static recovery(days = 7) {
         if (days < 7 || days > 30) {
-            const error = new Error( "Invalid Recovery Input" );
+            const error = new Error("Invalid Recovery Input");
             error.name = "Recovery-Out-of-Range-Exception";
-            error.stack = Utility.inspect( error, { colors: true } );
-
+            error.stack = util_1.default.inspect(error, { colors: true });
             throw error;
-        } else {
+        }
+        else {
             return days;
         }
     }
-
     /***
      * Delete Secret, with Default Recovery Options
      *
@@ -281,47 +242,35 @@ class Service extends Client {
      * @returns {Promise<Secret>}
      *
      */
-
-    async delete(parameter: Parameter | string, recovery: number = 7): Promise<boolean> {
+    async delete(parameter, recovery = 7) {
         await this.initialize();
-
-        if ( parameter instanceof Parameter ) {
-            const input: Input["Delete"] = {
+        if (parameter instanceof parameter_1.Parameter) {
+            const input = {
                 SecretId: parameter.string(),
                 RecoveryWindowInDays: Service.recovery(recovery),
                 ForceDeleteWithoutRecovery: false
             };
-
-            const command = new this.commands.delete( { ... input } );
-
-            const response = await this.service?.send( command ).catch( (error) => {
+            const command = new this.commands.delete({ ...input });
+            const response = await this.service?.send(command).catch((error) => {
                 throw error;
-            } );
-
-            console.log(Utility.inspect(response, { colors: true, showHidden: true, showProxy: true }));
-
+            });
+            console.log(util_1.default.inspect(response, { colors: true, showHidden: true, showProxy: true }));
             return true;
-        } else {
-            const input: Input["Delete"] = {
+        }
+        else {
+            const input = {
                 SecretId: parameter,
                 RecoveryWindowInDays: Service.recovery(recovery),
                 ForceDeleteWithoutRecovery: false
             };
-
-            const command = new this.commands.delete( { ... input } );
-
-            const response = await this.service?.send( command ).catch( (error) => {
+            const command = new this.commands.delete({ ...input });
+            const response = await this.service?.send(command).catch((error) => {
                 throw error;
-            } );
-
-            console.log(Utility.inspect(response, { colors: true, showHidden: true, showProxy: true }));
-
+            });
+            console.log(util_1.default.inspect(response, { colors: true, showHidden: true, showProxy: true }));
             return true;
         }
     }
 }
-
-export { Service };
-
-export default Service;
-
+exports.Service = Service;
+exports.default = Service;

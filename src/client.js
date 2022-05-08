@@ -1,12 +1,12 @@
-import Process from "process";
-import { Credential } from "./credential.js";
-
-import { Sha256 } from "@aws-crypto/sha256-js";
-
-import { AWS } from "./aws.js";
-
-import Utility from "util";
-
+﻿"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Client = void 0;
+const tslib_1 = require("tslib");
+const process_1 = tslib_1.__importDefault(require("process"));
+const credential_js_1 = require("./credential.js");
+const sha256_js_1 = require("@aws-crypto/sha256-js");
+const aws_js_1 = require("./aws.js");
+const util_1 = tslib_1.__importDefault(require("util"));
 /***
  * AWS Secrets Manager Client - Augmented Credential Provider
  * ---
@@ -59,41 +59,32 @@ import Utility from "util";
  * const secret = await service.get($);
  *
  */
-
-class Client extends Credential {
-    commands = AWS;
-
-    public constructor( profile: string ) {
-        super( profile );
+class Client extends credential_js_1.Credential {
+    commands = aws_js_1.AWS;
+    constructor(profile) {
+        super(profile);
     }
-
     /***
      * AWS Secrets Manager Function(s)
      *
      * @returns {string[]}
      */
-    public methods() {
-        return Object.keys( this.commands );
+    methods() {
+        return Object.keys(this.commands);
     }
-
-    public async initialize( debug: boolean = false ) {
-        await this.hydrate( );
-
-        this.service = new AWS.Client( {
+    async initialize(debug = false) {
+        await this.hydrate();
+        this.service = new aws_js_1.AWS.Client({
             tls: true,
-            sha256: Sha256,
+            sha256: sha256_js_1.Sha256,
             apiVersion: "2017-10-17",
             credentials: this.settings,
             customUserAgent: "Cloud-Technology-API",
-            region: Process.env?.["AWS_DEFAULT_REGION"] ?? "us-east-2"
-        } );
-
-        ( debug ) && console.debug( "[Debug] Client Instance" + ":", Utility.inspect( this, { showHidden: true, depth: Infinity } ) );
-
+            region: process_1.default.env?.["AWS_DEFAULT_REGION"] ?? "us-east-2"
+        });
+        (debug) && console.debug("[Debug] Client Instance" + ":", util_1.default.inspect(this, { showHidden: true, depth: Infinity }));
         return this;
     }
 }
-
-export { Client };
-
-export default Client;
+exports.Client = Client;
+exports.default = Client;
